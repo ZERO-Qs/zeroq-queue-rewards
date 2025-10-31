@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, HelpCircle, User, ChevronDown } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, HelpCircle, User, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -8,10 +8,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
+import { ProfileModal } from "./ProfileModal";
+import { useState } from "react";
 
 export const Navbar = () => {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith("/admin");
+  const navigate = useNavigate();
+  const { isLoggedIn, logout, userType } = useAuth();
+  const isAdmin = location.pathname.startsWith("/admin") || location.pathname.startsWith("/org-admin");
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const handleOpenProfileModal = () => {
+    setIsProfileModalOpen(true);
+  };
 
   if (isAdmin) return null;
 
@@ -58,29 +73,38 @@ export const Navbar = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
                   <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">User</span>
+                  <span className="hidden sm:inline">{isLoggedIn ? "Profile" : "Login"}</span>
                   <ChevronDown className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                  <Link to="/" className="w-full">User Mode</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/admin" className="w-full">Global Admin</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/org-admin" className="w-full">Org Admin</Link>
-                </DropdownMenuItem>
+                {!isLoggedIn && (
+                  <DropdownMenuItem>
+                    <Link to="/login" className="w-full">Login</Link>
+                  </DropdownMenuItem>
+                )}
+                {isLoggedIn && (
+                  <>
+                    <DropdownMenuItem onClick={handleOpenProfileModal}>
+                      My Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" size="icon" className="rounded-full">
+            {/* This button seems redundant if using DropdownMenu for user actions */}
+            {/* <Button variant="ghost" size="icon" className="rounded-full">
               <User className="w-5 h-5" />
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
+      <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
     </nav>
   );
 };
