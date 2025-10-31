@@ -1,11 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  Activity,
-  Building2,
+  ClipboardList,
+  Monitor,
   Users,
-  Coins,
-  BarChart3,
   Settings,
   LogOut,
   Menu,
@@ -14,16 +12,14 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
-  { icon: Activity, label: "Live Queues", path: "/admin/queues" },
-  { icon: Building2, label: "Organizations", path: "/admin/organizations" },
-  { icon: Users, label: "Users", path: "/admin/users" },
-  { icon: Coins, label: "Token Rewards", path: "/admin/tokens" },
-  { icon: BarChart3, label: "Analytics", path: "/admin/analytics" },
-  { icon: Settings, label: "Settings", path: "/admin/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/org-admin" },
+  { icon: ClipboardList, label: "Queues", path: "/org-admin/queues" },
+  { icon: Monitor, label: "Counters", path: "/org-admin/counters" },
+  { icon: Users, label: "Users", path: "/org-admin/users" },
+  { icon: Settings, label: "Settings", path: "/org-admin/settings" },
 ];
 
-export const AdminSidebar = () => {
+export const OrgAdminSidebar = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -42,7 +38,7 @@ export const AdminSidebar = () => {
             </div>
             <div>
               <h2 className="font-bold text-foreground">ZeroQ</h2>
-              <p className="text-xs text-muted-foreground">Global Admin</p>
+              <p className="text-xs text-muted-foreground">Org Admin</p>
             </div>
           </div>
         )}

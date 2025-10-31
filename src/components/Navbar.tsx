@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Wallet, Home, HelpCircle, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,7 @@ export const Navbar = () => {
   if (isAdmin) return null;
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md shadow-sm">
+    <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -56,6 +57,7 @@ export const Navbar = () => {
 
           {/* Right Side */}
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
@@ -69,7 +71,10 @@ export const Navbar = () => {
                   <Link to="/" className="w-full">User Mode</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link to="/admin" className="w-full">Admin Panel</Link>
+                  <Link to="/admin" className="w-full">Global Admin</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="/org-admin" className="w-full">Org Admin</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

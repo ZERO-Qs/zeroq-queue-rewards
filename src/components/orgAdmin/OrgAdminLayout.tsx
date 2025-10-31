@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
-import { AdminSidebar } from "./AdminSidebar";
+import { OrgAdminSidebar } from "./OrgAdminSidebar";
 import { Search, Bell, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export const AdminLayout = () => {
+export const OrgAdminLayout = () => {
   return (
     <div className="min-h-screen flex w-full bg-background">
-      <AdminSidebar />
+      <OrgAdminSidebar />
 
       <div className="flex-1 flex flex-col">
         {/* Top Navbar */}
