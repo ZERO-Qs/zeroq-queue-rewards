@@ -1,8 +1,9 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
 
 interface AuthContextType {
   isLoggedIn: boolean;
   userType: 'user' | 'globalAdmin' | 'orgAdmin' | null;
+  isAdmin: boolean;
   login: (type: 'user' | 'globalAdmin' | 'orgAdmin') => void;
   logout: () => void;
 }
@@ -10,14 +11,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    const storedLoggedIn = localStorage.getItem('isLoggedIn');
-    return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
-  });
-  const [userType, setUserType] = useState<'user' | 'globalAdmin' | 'orgAdmin' | null>(() => {
-    const storedUserType = localStorage.getItem('userType');
-    return storedUserType as 'user' | 'globalAdmin' | 'orgAdmin' | null;
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [userType, setUserType] = useState<'user' | 'globalAdmin' | 'orgAdmin' | null>(null);
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
@@ -37,16 +32,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userType");
     setIsLoggedIn(false);
     setUserType(null);
+    // Call backend logout endpoint
+    fetch("/api/logout", { method: "POST" }).catch((error) =>
+      console.error("Error logging out on backend:", error)
+    );
   };
 
+  const authContextValue = useMemo(
+    () => ({
+      isLoggedIn,
+      userType,
+      isAdmin: userType === 'globalAdmin' || userType === 'orgAdmin',
+      login,
+      logout,
+    }),
+    [isLoggedIn, userType]
+  );
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userType, login, logout }}>
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

@@ -15,20 +15,21 @@ import { useState } from "react";
 export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, logout, userType } = useAuth();
-  const isAdmin = location.pathname.startsWith("/admin") || location.pathname.startsWith("/org-admin");
+  const { isLoggedIn, logout, userType, isAdmin } = useAuth();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const handleLogout = () => {
+    console.log("Logout button clicked.");
     logout();
     navigate("/login");
   };
 
   const handleOpenProfileModal = () => {
+    console.log("My Profile button clicked.");
     setIsProfileModalOpen(true);
   };
 
-  if (isAdmin) return null;
+  // if (isAdmin) return null; // Remove this line
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md shadow-sm">
@@ -45,28 +46,30 @@ export const Navbar = () => {
             </div>
           </Link>
 
-          {/* Center Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link 
-              to="/" 
-              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Home className="w-4 h-4" />
-              Home
-            </Link>
+          {/* Center Navigation - Conditionally render for non-admin users */}
+          {!isAdmin && (
+            <div className="hidden md:flex items-center gap-8">
+              <Link 
+                to="/" 
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </Link>
 
 
 
-            <Link 
-              to="/support" 
-              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              <HelpCircle className="w-4 h-4" />
-              Support
-            </Link>
-          </div>
+              <Link 
+                to="/support" 
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                <HelpCircle className="w-4 h-4" />
+                Support
+              </Link>
+            </div>
+          )}
 
-          {/* Right Side */}
+          {/* Right Side - Always render */}
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <DropdownMenu>
