@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navbar } from "@/components/Navbar";
 import { OrganizationCard } from "@/components/OrganizationCard";
 import { QuickJoinModal } from "@/components/QuickJoinModal";
 import type { Service, JoinedQueue } from "@/components/QuickJoinModal";
@@ -8,23 +9,87 @@ import { toast } from "sonner";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-interface Organization {
-  id: string;
-  name: string;
-  type: string;
-  location: string;
-  services: string[];
-  activeQueues: number;
-  avgWaitTime: string;
-  image: string;
-}
+// Mock data
+const organizations = [
+  {
+    id: "1",
+    name: "HDFC Bank - Dhanbad Branch",
+    type: "Bank",
+    location: "Main Road, Dhanbad",
+    services: ["Withdraw", "Deposit", "Loan Office"],
+    activeQueues: 3,
+    avgWaitTime: "8 min",
+    image: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=800&q=80",
+  },
+  {
+    id: "2",
+    name: "Apollo Hospital",
+    type: "Hospital",
+    location: "Medical District, Dhanbad",
+    services: ["OPD", "Lab Tests", "Pharmacy"],
+    activeQueues: 5,
+    avgWaitTime: "12 min",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80",
+  },
+  {
+    id: "3",
+    name: "RTO Office Dhanbad",
+    type: "Government",
+    location: "Civil Lines, Dhanbad",
+    services: ["DL Issue", "Vehicle Registration", "License Renewal"],
+    activeQueues: 4,
+    avgWaitTime: "15 min",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80",
+  },
+  {
+    id: "4",
+    name: "State Bank of India",
+    type: "Bank",
+    location: "Bank More, Dhanbad",
+    services: ["Withdraw", "Deposit", "Account Services"],
+    activeQueues: 3,
+    avgWaitTime: "6 min",
+    image: "https://images.unsplash.com/photo-1554224311-beee2169ff7b?w=800&q=80",
+  },
+  {
+    id: "5",
+    name: "Max Healthcare",
+    type: "Hospital",
+    location: "Saraidhela, Dhanbad",
+    services: ["OPD", "Emergency", "Diagnostics"],
+    activeQueues: 6,
+    avgWaitTime: "10 min",
+    image: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=800&q=80",
+  },
+  {
+    id: "6",
+    name: "ICICI Bank",
+    type: "Bank",
+    location: "Hirapur, Dhanbad",
+    services: ["Withdraw", "Deposit", "Loan Office"],
+    activeQueues: 2,
+    avgWaitTime: "5 min",
+    image: "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=800&q=80",
+  },
+  {
+    id: "7",
+    name: "ABCDEF Bank",
+    type: "Bank",
+    location: "Hirapur, Dhanbad",
+    services: ["Withdraw", "Deposit", "OPD"],
+    activeQueues: 2,
+    avgWaitTime: "5 min",
+    image: "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=800&q=80",
+  },
+];
+
+
 
 export default function Home() {
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
   const [selectedOrgServices, setSelectedOrgServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [joinedQueues, setJoinedQueues] = useState<JoinedQueue[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]); // State to store fetched organizations
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
@@ -33,23 +98,6 @@ export default function Home() {
     if (storedQueues) {
       setJoinedQueues(JSON.parse(storedQueues));
     }
-
-    // Fetch organizations from the backend
-    const fetchOrganizations = async () => {
-      try {
-        const response = await fetch("/api/organizations"); // Assuming this endpoint returns all organizations
-        if (!response.ok) {
-          throw new Error("Failed to fetch organizations.");
-        }
-        const data = await response.json();
-        setOrganizations(data);
-      } catch (error) {
-        console.error("Error fetching organizations:", error);
-        toast.error("Failed to load organizations.");
-      }
-    };
-
-    fetchOrganizations();
   }, []);
 
   const filteredOrgs = organizations.filter(org =>
@@ -62,6 +110,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
+
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary/10 via-accent/10 to-background border-b">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
@@ -135,6 +184,8 @@ export default function Home() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
+
+
               <div className="bg-gradient-to-br from-[hsl(var(--how-it-works-background-from))] to-[hsl(var(--how-it-works-background-to))] border border-[hsl(var(--how-it-works-border))] rounded-2xl p-6">
                 <h3 className="font-bold text-[hsl(var(--how-it-works-text-foreground))] mb-2">How it works</h3>
                 <ul className="space-y-2 text-sm text-[hsl(var(--how-it-works-text-muted-foreground))]">
