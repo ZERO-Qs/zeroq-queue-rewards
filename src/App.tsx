@@ -10,12 +10,15 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OrgAdminSetup from "./pages/OrgAdminSetup";
 import Profile from "./pages/Profile";
+import Queues from "./pages/Queues";
+import { UserLayout } from "./components/UserLayout";
 
 import { AdminLayout } from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import LiveQueues from "./pages/admin/LiveQueues";
 import Analytics from "./pages/admin/Analytics";
 import AdminProfile from "./pages/admin/AdminProfile";
+import Wallet from "./pages/admin/Wallet"; // Import the new Wallet component
 import { OrgAdminLayout } from "./components/orgAdmin/OrgAdminLayout";
 import OrgAdminDashboard from "./pages/orgAdmin/Dashboard";
 import OrgAdminQueues from "./pages/orgAdmin/Queues";
@@ -23,6 +26,8 @@ import OrgAdminCounters from "./pages/orgAdmin/Counters";
 import OrgAdminUsers from "./pages/orgAdmin/Users";
 import OrgAdminSettings from "./pages/orgAdmin/Settings";
 import OrgAdminProfile from "./pages/orgAdmin/OrgAdminProfile";
+import OrgAdminProfileTabs from "./pages/orgAdmin/OrgAdminProfileTabs";
+import OrgAdminWallet from "./pages/orgAdmin/Wallet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,11 +41,14 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* User Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/organization/:id" element={<Organization />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/org-admin-setup" element={<OrgAdminSetup />} />
+            <Route element={<UserLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/organization/:id" element={<Organization />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/org-admin-setup" element={<OrgAdminSetup />} />
+              <Route path="/queues" element={<Queues />} />
+            </Route>
 
 
             
@@ -54,6 +62,7 @@ const App = () => (
               <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Dashboard />} />
               <Route path="profile" element={<AdminProfile />} />
+              <Route path="wallet" element={<Wallet />} /> {/* Add the Wallet route */}
             </Route>
 
             {/* Organization Admin Routes */}
@@ -64,6 +73,7 @@ const App = () => (
               <Route path="users" element={<OrgAdminUsers />} />
               <Route path="settings" element={<OrgAdminSettings />} />
               <Route path="profile" element={<OrgAdminProfile />} />
+              <Route path="wallet" element={<OrgAdminWallet />} />
             </Route>
 
             {/* 404 */}

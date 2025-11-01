@@ -1,15 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  ClipboardList,
-  Monitor,
-  Users,
-  Settings,
-  LogOut,
-  Menu,
-} from "lucide-react";
+import { LayoutDashboard, ClipboardList, Monitor, Users, Settings, LogOut, Menu, User, Wallet as WalletIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/org-admin" },
@@ -17,11 +11,20 @@ const menuItems = [
   { icon: Monitor, label: "Counters", path: "/org-admin/counters" },
   { icon: Users, label: "Users", path: "/org-admin/users" },
   { icon: Settings, label: "Settings", path: "/org-admin/settings" },
+  { icon: User, label: "Profile", path: "/org-admin/profile" },
+  { icon: WalletIcon, label: "Wallet", path: "/org-admin/wallet" }, // Add Wallet menu item
 ];
 
 export const OrgAdminSidebar = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -68,7 +71,7 @@ export const OrgAdminSidebar = () => {
                   : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
               } ${collapsed ? "justify-center" : ""}`}
             >
-              <Icon className="w-5 h-5 flex-shrink-0" />
+              <Icon size={20} className="w-5 h-5 flex-shrink-0" />
               {!collapsed && <span className="font-medium">{item.label}</span>}
             </Link>
           );
@@ -82,6 +85,7 @@ export const OrgAdminSidebar = () => {
           className={`w-full ${
             collapsed ? "justify-center px-0" : "justify-start"
           } text-muted-foreground hover:text-destructive`}
+          onClick={handleLogout}
         >
           <LogOut className="w-5 h-5" />
           {!collapsed && <span className="ml-3">Logout</span>}

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Monitor, Edit, Trash2, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,25 +14,38 @@ interface Counter {
   staff: string;
   status: "active" | "inactive";
   served: number;
+  paused: boolean;
 }
 
 export default function OrgAdminCounters() {
-  const [counters, setCounters] = useState<Counter[]>([
-    { id: "1", name: "Withdraw Counter 1", staff: "John Doe", status: "active", served: 23 },
-    { id: "2", name: "Deposit Counter 2", staff: "Jane Smith", status: "active", served: 18 },
-    { id: "3", name: "Loan Office", staff: "Bob Wilson", status: "inactive", served: 12 },
-  ]);
+  const [counters, setCounters] = useState<Counter[]>(() => {
+    const savedCounters = localStorage.getItem("counters");
+    return savedCounters ? JSON.parse(savedCounters) : [
+      { id: "1", name: "Withdraw Counter 1", staff: "John Doe", status: "active", served: 23, paused: false },
+      { id: "2", name: "Deposit Counter 2", staff: "Jane Smith", status: "active", served: 18, paused: false },
+      { id: "3", name: "Loan Office", staff: "Bob Wilson", status: "inactive", served: 12, paused: false },
+    ];
+  });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentCounter, setCurrentCounter] = useState<Counter | null>(null);
   const [newCounterName, setNewCounterName] = useState("");
   const [newCounterStaff, setNewCounterStaff] = useState("");
   const [newCounterStatus, setNewCounterStatus] = useState<"active" | "inactive">("active");
+  const [newCounterPaused, setNewCounterPaused] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("counters", JSON.stringify(counters));
+  }, [counters]);
 
   const handleEditCounter = (id: string) => {
     const counterToEdit = counters.find((counter) => counter.id === id);
     if (counterToEdit) {
       setCurrentCounter(counterToEdit);
+      setNewCounterName(counterToEdit.name);
+      setNewCounterStaff(counterToEdit.staff);
+      setNewCounterStatus(counterToEdit.status);
+      setNewCounterPaused(counterToEdit.paused);
       setIsEditModalOpen(true);
     }
   };
@@ -43,26 +56,32 @@ export default function OrgAdminCounters() {
 
   const handleSaveCounter = () => {
     if (currentCounter) {
-      setCounters(counters.map((counter) => (counter.id === currentCounter.id ? currentCounter : counter)));
+      setCounters(counters.map((counter) =>
+        counter.id === currentCounter.id
+          ? { ...currentCounter, name: newCounterName, staff: newCounterStaff, status: newCounterStatus, paused: newCounterPaused }
+          : counter
+      ));
       setIsEditModalOpen(false);
       setCurrentCounter(null);
     }
   };
 
   const handleAddCounter = () => {
-    const newId = (parseInt(counters[counters.length - 1].id) + 1).toString();
+    const newId = (counters.length > 0 ? parseInt(counters[counters.length - 1].id) + 1 : 1).toString();
     const newCounter: Counter = {
       id: newId,
       name: newCounterName,
       staff: newCounterStaff,
       status: newCounterStatus,
       served: 0,
+      paused: newCounterPaused,
     };
     setCounters([...counters, newCounter]);
     setIsAddModalOpen(false);
     setNewCounterName("");
     setNewCounterStaff("");
     setNewCounterStatus("active");
+    setNewCounterPaused(false);
   };
 
   const handleCounterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +96,12 @@ export default function OrgAdminCounters() {
     }
   };
 
+  const handlePausedChange = (checked: boolean) => {
+    if (currentCounter) {
+      setCurrentCounter({ ...currentCounter, paused: checked });
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -84,7 +109,13 @@ export default function OrgAdminCounters() {
           <h1 className="text-3xl font-bold text-foreground mb-2">Manage Counters</h1>
           <p className="text-muted-foreground">Configure and monitor service counters</p>
         </div>
-        <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+        <Button className="gap-2" onClick={() => {
+          setNewCounterName("");
+          setNewCounterStaff("");
+          setNewCounterStatus("active");
+          setNewCounterPaused(false);
+          setIsAddModalOpen(true);
+        }}>
           <Plus className="w-4 h-4" />
           Add Counter
         </Button>
@@ -176,6 +207,19 @@ export default function OrgAdminCounters() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="paused" className="text-right">
+                  Paused
+                </Label>
+                <input
+                  type="checkbox"
+                  id="paused"
+                  name="paused"
+                  checked={currentCounter.paused}
+                  onChange={(e) => handlePausedChange(e.target.checked)}
+                  className="col-span-3"
+                />
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -227,6 +271,19 @@ export default function OrgAdminCounters() {
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="newCounterPaused" className="text-right">
+                Paused
+              </Label>
+              <input
+                type="checkbox"
+                id="newCounterPaused"
+                name="newCounterPaused"
+                checked={newCounterPaused}
+                onChange={(e) => setNewCounterPaused(e.target.checked)}
+                className="col-span-3"
+              />
             </div>
           </div>
           <DialogFooter>

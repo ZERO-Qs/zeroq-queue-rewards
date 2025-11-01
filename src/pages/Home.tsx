@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { OrganizationCard } from "@/components/OrganizationCard";
 import { QuickJoinModal } from "@/components/QuickJoinModal";
-import type { Service } from "@/components/QuickJoinModal";
+import type { Service, JoinedQueue } from "@/components/QuickJoinModal";
 
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -87,6 +87,14 @@ export default function Home() {
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
   const [selectedOrgServices, setSelectedOrgServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [joinedQueues, setJoinedQueues] = useState<JoinedQueue[]>([]);
+
+  useEffect(() => {
+    const storedQueues = localStorage.getItem("joinedQueues");
+    if (storedQueues) {
+      setJoinedQueues(JSON.parse(storedQueues));
+    }
+  }, []);
 
   const filteredOrgs = organizations.filter(org =>
     org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -98,7 +106,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
 
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary/10 via-accent/10 to-background border-b">
@@ -153,6 +160,7 @@ export default function Home() {
                     setSelectedOrg(org.id);
                     setSelectedOrgServices(services);
                   }}
+                  hasJoinedQueue={joinedQueues.some(q => q.organizationId === org.id)}
                 />
               ))}
             </div>
@@ -203,6 +211,7 @@ export default function Home() {
           setSelectedOrgServices([]);
         }}
         organizationName={selectedOrgName}
+        organizationId={selectedOrg || ""}
         services={selectedOrgServices}
       />
     </div>

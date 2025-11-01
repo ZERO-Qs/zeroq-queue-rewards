@@ -21,6 +21,7 @@ interface OrganizationCardProps {
   avgWaitTime: string;
   image: string;
   onQuickJoin: (services: Service[]) => void;
+  hasJoinedQueue: boolean;
 }
 
 export const OrganizationCard = ({
@@ -33,6 +34,7 @@ export const OrganizationCard = ({
   avgWaitTime,
   image,
   onQuickJoin,
+  hasJoinedQueue,
 }: OrganizationCardProps) => {
   return (
     <Card className="hover-lift overflow-hidden group">
@@ -46,6 +48,11 @@ export const OrganizationCard = ({
         <Badge className="absolute top-3 right-3 bg-white/90 text-foreground">
           {type}
         </Badge>
+        {hasJoinedQueue && (
+          <Badge variant="default" className="absolute top-3 left-3 bg-green-500 text-white">
+            Joined
+          </Badge>
+        )}
       </div>
 
       <CardHeader className="pb-3">
@@ -112,8 +119,9 @@ export const OrganizationCard = ({
             }));
             onQuickJoin(quickJoinServices);
           }}
+          disabled={hasJoinedQueue}
         >
-          Quick Join
+          {hasJoinedQueue ? "Joined" : "Quick Join"}
         </Button>
       </CardFooter>
     </Card>

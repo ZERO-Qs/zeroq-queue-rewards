@@ -15,22 +15,22 @@ export default function Profile() {
         <CardContent className="flex justify-center">
           <div className="flex flex-col items-center space-y-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarImage src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80" alt="Roshan Kumar" />
+              <AvatarFallback>RO</AvatarFallback>
             </Avatar>
             <div className="text-center">
-              <h3 className="text-2xl font-bold">John Doe</h3>
-              <p className="text-muted-foreground">john.doe@example.com</p>
+              <h3 className="text-2xl font-bold">Roshan Kumar</h3>
+              <p className="text-muted-foreground">roshan.kumar@example.com</p>
               <p className="text-muted-foreground">User Type: {userType}</p>
             </div>
             <div className="grid gap-4 w-full max-w-md">
               <div className="flex justify-between items-center">
                 <span className="font-semibold">Phone:</span>
-                <span>+1 (555) 123-4567</span>
+                <span>+91 98765 43210</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-semibold">Address:</span>
-                <span>123 Main St, Anytown, USA</span>
+                <span>123, Main Street, Bangalore, India</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-semibold">Member Since:</span>
@@ -39,7 +39,7 @@ export default function Profile() {
               <div className="text-left">
                 <h4 className="font-semibold mb-2">About Me:</h4>
                 <p className="text-muted-foreground">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Passionate about technology and building innovative solutions.
                 </p>
               </div>
             </div>

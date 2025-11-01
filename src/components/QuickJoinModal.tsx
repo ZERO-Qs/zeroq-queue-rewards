@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 export interface Service {
   id: string;
@@ -15,60 +16,95 @@ export interface Service {
   color: string;
 }
 
+export interface JoinedQueue {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  serviceLabel: string;
+  ticketNumber: string;
+  eta: number;
+  joinedAt: string;
+}
+
 interface QuickJoinModalProps {
   open: boolean;
   onClose: () => void;
   organizationName: string;
+  organizationId: string;
   services: Service[];
 }
 
-export const QuickJoinModal = ({ open, onClose, organizationName, services }: QuickJoinModalProps) => {
-  const handleServiceSelect = (serviceLabel: string) => {
-    // Simulate joining queue
-    const ticketNumber = `A${Math.floor(Math.random() * 100) + 1}`;
-    const eta = Math.floor(Math.random() * 15) + 3;
-    
-    toast.success(`Joined ${serviceLabel} Queue`, {
-      description: `Ticket #${ticketNumber} • ETA ${eta} min`,
-      duration: 4000,
-    });
-    
+interface JoinedQueue {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  serviceName: string;
+  joinedAt: string;
+}
+
+export const QuickJoinModal: React.FC<QuickJoinModalProps> = ({
+  open,
+  onClose,
+  organizationName,
+  organizationId,
+  services,
+}) => {
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [joinedQueues, setJoinedQueues] = useState<JoinedQueue[]>([]);
+
+  useEffect(() => {
+    const storedQueues = localStorage.getItem("joinedQueues");
+    if (storedQueues) {
+      setJoinedQueues(JSON.parse(storedQueues));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (joinedQueues.length > 0) {
+      localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
+    }
+  }, [joinedQueues]);
+
+  const handleServiceSelect = (service: Service) => {
+    setSelectedService(service);
+    toast.success(`You have joined the queue for ${service.name} at ${organizationName}!`);
+
+    const newJoinedQueue: JoinedQueue = {
+      id: `${organizationId}-${service.name}-${Date.now()}`,
+      organizationId,
+      organizationName,
+      serviceName: service.name,
+      joinedAt: new Date().toISOString(),
+    };
+
+    setJoinedQueues((prevQueues) => [...prevQueues, newJoinedQueue]);
     onClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Choose Your Service</DialogTitle>
-          <DialogDescription className="text-base">
-            Quick join at {organizationName}
+          <DialogTitle>Join Queue at {organizationName}</DialogTitle>
+          <DialogDescription>
+            Select a service to join the queue.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="grid grid-cols-3 gap-4 py-6">
-          {services.map((service) => {
-            const Icon = service.icon;
-            return (
-              <button
-                key={service.id}
-                onClick={() => handleServiceSelect(service.label)}
-                className="group flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-border hover:border-primary transition-all hover:shadow-md"
-              >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
-                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                  {service.label}
-                </span>
-              </button>
-            );
-          })}
+        <div className="grid gap-4 py-4">
+          {services.map((service) => (
+            <Button
+              key={service.name}
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => handleServiceSelect(service)}
+            >
+              {service.name}
+            </Button>
+          ))}
         </div>
-
-        <p className="text-xs text-center text-muted-foreground">
-          You'll be added to the queue with the shortest wait time
-        </p>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

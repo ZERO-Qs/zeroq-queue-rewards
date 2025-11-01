@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  Wallet as WalletIcon, // Import Wallet icon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -21,6 +22,7 @@ const menuItems = [
   { icon: Coins, label: "Token Rewards", path: "/admin/tokens" },
   { icon: BarChart3, label: "Analytics", path: "/admin/analytics" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
+  { icon: WalletIcon, label: "Wallet", path: "/admin/wallet" }, // Add Wallet menu item
 ];
 
 export const AdminSidebar = () => {

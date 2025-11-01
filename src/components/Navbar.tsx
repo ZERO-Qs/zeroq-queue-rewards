@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, HelpCircle, User, ChevronDown, LogOut } from "lucide-react";
+import { Home, HelpCircle, User, ChevronDown, LogOut, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -11,25 +11,27 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { ProfileModal } from "./ProfileModal";
 import { useState } from "react";
+import { OrgAdminProfileModal } from "./orgAdmin/OrgAdminProfileModal";
 
 export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, logout, userType, isAdmin } = useAuth();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isOrgAdminProfileModalOpen, setIsOrgAdminProfileModalOpen] = useState(false);
+
+  const handleOpenProfileModal = () => {
+    if (userType === "orgAdmin") {
+      setIsOrgAdminProfileModalOpen(true);
+    } else {
+      setIsProfileModalOpen(true);
+    }
+  };
 
   const handleLogout = () => {
-    console.log("Logout button clicked.");
     logout();
     navigate("/login");
   };
-
-  const handleOpenProfileModal = () => {
-    console.log("My Profile button clicked.");
-    setIsProfileModalOpen(true);
-  };
-
-  // if (isAdmin) return null; // Remove this line
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md shadow-sm">
@@ -57,6 +59,14 @@ export const Navbar = () => {
                 Home
               </Link>
 
+              <Link 
+                to="/queues" 
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                <List className="w-4 h-4" />
+                Queues
+              </Link>
+
 
 
               <Link 
@@ -72,33 +82,27 @@ export const Navbar = () => {
           {/* Right Side - Always render */}
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">{isLoggedIn ? "Profile" : "Login"}</span>
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                {!isLoggedIn && (
+            {isLoggedIn ? (
+              <Button variant="outline" className="gap-2" onClick={handleLogout}>
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </Button>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">Login</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem>
                     <Link to="/login" className="w-full">Login</Link>
                   </DropdownMenuItem>
-                )}
-                {isLoggedIn && (
-                  <>
-                    <DropdownMenuItem onClick={handleOpenProfileModal}>
-                      My Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             {/* This button seems redundant if using DropdownMenu for user actions */}
             {/* <Button variant="ghost" size="icon" className="rounded-full">
@@ -108,6 +112,7 @@ export const Navbar = () => {
         </div>
       </div>
       <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+      <OrgAdminProfileModal isOpen={isOrgAdminProfileModalOpen} onClose={() => setIsOrgAdminProfileModalOpen(false)} />
     </nav>
   );
 };

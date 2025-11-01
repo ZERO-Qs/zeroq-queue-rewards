@@ -33,11 +33,20 @@ export default function Login() {
         redirectPath = "/admin"; // Redirect to global admin dashboard
       }
     } else if (loginType === "orgAdmin") {
-      if ((email === "Hdfc@Dhn" && password === "HDFCDhn") || (email === "apollo@dhn" && password === "apolloDhn")) {
+      if (email === "Hdfc@Dhn" && password === "HDFCDhn") {
         isAuthenticated = true;
-        login("orgAdmin");
+        login("orgAdmin", "org123"); // Hardcoded organizationId for demonstration
         // Simulate first-time setup check
-        const isFirstTimeSetup = true; // This would come from a user profile in a real app
+        const isFirstTimeSetup = false; // This would come from a user profile in a real app
+        if (isFirstTimeSetup) {
+          redirectPath = "/org-admin-setup"; // Redirect to org admin setup page
+        } else {
+          redirectPath = "/org-admin"; // Redirect to org admin dashboard
+        }
+      } else if (email === "apollo@dhn" && password === "apolloDhn") {
+        isAuthenticated = true;
+        login("orgAdmin", "org456"); // Another hardcoded organizationId
+        const isFirstTimeSetup = false; // This would come from a user profile in a real app
         if (isFirstTimeSetup) {
           redirectPath = "/org-admin-setup"; // Redirect to org admin setup page
         } else {

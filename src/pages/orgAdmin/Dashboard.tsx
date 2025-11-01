@@ -1,3 +1,4 @@
+import OrgAdminWalletDashboardCard from "@/components/orgAdmin/OrgAdminWalletDashboardCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock, CheckCircle, Users } from "lucide-react";
 
@@ -18,6 +19,7 @@ export default function OrgAdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid md:grid-cols-4 gap-6">
+        <OrgAdminWalletDashboardCard />
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
