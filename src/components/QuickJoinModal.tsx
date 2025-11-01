@@ -5,6 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -65,20 +66,37 @@ export const QuickJoinModal: React.FC<QuickJoinModalProps> = ({
     }
   }, [joinedQueues]);
 
-  const handleServiceSelect = (service: Service) => {
-    setSelectedService(service);
-    toast.success(`You have joined the queue for ${service.name} at ${organizationName}!`);
+  const handleServiceSelect = async (service: Service) => {
+    try {
+      const response = await fetch(`/api/queues/${service.id}/join`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ organizationId, serviceId: service.id }),
+      });
 
-    const newJoinedQueue: JoinedQueue = {
-      id: `${organizationId}-${service.name}-${Date.now()}`,
-      organizationId,
-      organizationName,
-      serviceName: service.name,
-      joinedAt: new Date().toISOString(),
-    };
+      if (!response.ok) {
+        throw new Error("Failed to join queue.");
+      }
 
-    setJoinedQueues((prevQueues) => [...prevQueues, newJoinedQueue]);
-    onClose();
+      const result = await response.json();
+      toast.success(`You have joined the queue for ${service.name} at ${organizationName}!`);
+
+      const newJoinedQueue: JoinedQueue = {
+        id: result.id || `${organizationId}-${service.name}-${Date.now()}`, // Use ID from backend if available
+        organizationId,
+        organizationName,
+        serviceName: service.name,
+        joinedAt: new Date().toISOString(),
+      };
+
+      setJoinedQueues((prevQueues) => [...prevQueues, newJoinedQueue]);
+      onClose();
+    } catch (error) {
+      console.error("Error joining queue:", error);
+      toast.error("Failed to join queue. Please try again.");
+    }
   };
 
   return (

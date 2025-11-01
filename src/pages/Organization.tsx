@@ -1,5 +1,4 @@
 import { useParams, Link } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +32,7 @@ export default function Organization() {
   if (!org) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
+        
         <div className="max-w-7xl mx-auto px-6 py-12 text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Organization not found</h1>
           <Button asChild>
@@ -54,7 +53,7 @@ export default function Organization() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Back Button */}
